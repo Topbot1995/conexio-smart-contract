@@ -254,8 +254,9 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
     mapping(address => uint256) private private_released;
 
     // team sale
+    uint256 public constant TEAM_CAP = 15; // 15%
     uint256 public TEAM_FULL_LOCK = 86400 * 30 * 6; //6 months
-    uint256 public TEAM_VESTING_DURATION = 86400 * 30 * 18; //18 months
+    uint256 public TEAM_VESTING_DURATION = 86400 * 30 * 18; //18 months    
     
     uint256 public team_startTime;
     uint256 public team_endTime;
@@ -267,15 +268,30 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
     uint256 team_lock;
     uint256 team_released;
 
+    uint256 public constant MARKET_CAP = 15;
+    uint256 public MARKET_TGE_RELEASE = 15;
+    uint256 public MARKET_VESTING_DURATION = 86400 * 30 * 24; // 24 months
+
+    uint256 public market_startTime;
+    uint256 public market_endTime;
+
+    uint8 public market_stage;
+    address public MARKETING_ADDRESS =
+        0xda9D2d8e320f4C05e41C0ACEb92B89F1c347BFeA;
+    uint256 market_lock;
+    uint256 market_released;
+
 
     event PrivateClaim(address indexed account, uint256 amount, uint256 time);
     event TeamClaim(address indexed account, uint256 amount, uint256 time);
+    event MarketClaim(address indexed account, uint256 amount, uint256 time);
 
     constructor() BEP20("CroToken", "CROT") {  
 
         private_stage = 0;            
         maxTotalSupply = 1000000 * (10 ** decimals());
         MAX_WALLET_BALANCE = maxTotalSupply.div(100);
+        team_lock = maxTotalSupply.mul(TEAM_CAP).div(100);
 
     }
     modifier canPrivateClaim() {
@@ -298,7 +314,7 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         for (uint256 i = 0; i < whitelist.length; i++) {            
             uint256 croAmount = (private_locks[whitelist[i]] * PRIVATE_TGE_RELEASE) / 100;
             private_locks[whitelist[i]] -= croAmount;
-            private_released[whitelist[i]] += croAmount;
+            //private_released[whitelist[i]] += croAmount;
             _mint(whitelist[i], croAmount);            
         }
     }
@@ -349,7 +365,7 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         require(amount > 0, "Nothing to claim");
         require(amount.add(balanceOf(_msgSender())) <= MAX_WALLET_BALANCE.mul(maxTotalSupply), "ERROR: OverBalanced!!!");
         private_released[_msgSender()] += amount;
-        private_locks[_msgSender()] -= amount;
+        //private_locks[_msgSender()] -= amount;
         _mint(_msgSender(), amount);
 
         emit PrivateClaim(_msgSender(), amount, block.timestamp);
@@ -384,7 +400,7 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
     }
 
     //airdrop function 
-
+    
     function airdrop(address _address, uint256 _amount) external onlyOwner {
         require(_address != address(0), "Invalid Address");
         require(_amount > 0, "Invalid Address");
@@ -405,23 +421,52 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
     }
 
     function teamClaim() external nonReentrant() {
-        require(stage == 1, "Cannot Claim now");
+        require(team_stage == 1, "Cannot Claim now");
         require(block.timestamp > team_startTime, "ERROR: still Locked");
         require(_msgSender() == TEAM_ADVISOR_ADDRESS, "Invalid Address");
 
         uint256 amount = teamCanUnlockAmount();
         require(amount > 0, "Nothing to Claim");
-        team_released += amount;
-        team_locked -= amount;
+        team_released += amount;        
         _mint(_msgSender(), amount);
     }
 
-    // 
+    function teamCanUnlockAmount() public view returns (uint256) {
+
+        if (block.timestamp < team_startTime) {
+            return 0;
+        } else if (block.timestamp >= team_endTime) {
+            return team_lock - team_released;
+        } else {
+            uint256 releasedTime = releasedTimes(team_startTime, team_endTime);
+            uint256 totalVestingTime = team_endTime - team_startTime;
+            return ((team_lock * releasedTime) / totalVestingTime) - team_released;
+        }
+    }
+    
+    function teamInfo() external view returns (uint8, uint256, uint256, uint256, uint256, uint256) {
+        if(team_stage == 0) return (team_stage, team_startTime, team_endTime, team_lock, team_released, 0);
+        return (team_stage, team_startTime, team_endTime, team_lock, team_released, teamCanUnlockAmount());
+    }
+    
 
     function burn(uint256 _amount) external onlyOwner returns (bool) {
         require(balanceOf(owner()) >= _amount, "ERROR: Insufficient balance");
         _burn(owner(), _amount);
     }
+
+    function withdraw(address payable to, uint256 value)
+        external
+        onlyOwner
+    {
+        require(
+            value <= address(this).balance,
+            "withdrawAdmin: withdraw amount less than balance of this smart contract"
+        );
+        to.transfer(value);
+    }
+
+    
 
     /* ========== EMERGENCY ========== */
     /*
