@@ -6,225 +6,7 @@ import "./ERC20/IBEP20.sol";
 import "./ERC20/SafeBEP20.sol";
 import "./access/Ownable.sol";
 import "./ReentrancyGuard.sol";
-
-/**
- * @dev Wrappers over Solidity's arithmetic operations.
- *
- * NOTE: `SafeMath` is generally not needed starting with Solidity 0.8, since the compiler
- * now has built in overflow checking.
- */
-library SafeMath {
-    /**
-     * @dev Returns the addition of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            uint256 c = a + b;
-            if (c < a) return (false, 0);
-            return (true, c);
-        }
-    }
-
-    /**
-     * @dev Returns the substraction of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b > a) return (false, 0);
-            return (true, a - b);
-        }
-    }
-
-    /**
-     * @dev Returns the multiplication of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-            // benefit is lost if 'b' is also tested.
-            // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-            if (a == 0) return (true, 0);
-            uint256 c = a * b;
-            if (c / a != b) return (false, 0);
-            return (true, c);
-        }
-    }
-
-    /**
-     * @dev Returns the division of two unsigned integers, with a division by zero flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b == 0) return (false, 0);
-            return (true, a / b);
-        }
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers, with a division by zero flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        unchecked {
-            if (b == 0) return (false, 0);
-            return (true, a % b);
-        }
-    }
-
-    /**
-     * @dev Returns the addition of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `+` operator.
-     *
-     * Requirements:
-     *
-     * - Addition cannot overflow.
-     */
-    function add(uint256 a, uint256 b) internal pure returns (uint256) {
-        return a + b;
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return a - b;
-    }
-
-    /**
-     * @dev Returns the multiplication of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `*` operator.
-     *
-     * Requirements:
-     *
-     * - Multiplication cannot overflow.
-     */
-    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        return a * b;
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers, reverting on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator.
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return a / b;
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * reverting when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return a % b;
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
-     * overflow (when the result is negative).
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {trySub}.
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(
-        uint256 a,
-        uint256 b,
-        string memory errorMessage
-    ) internal pure returns (uint256) {
-        unchecked {
-            require(b <= a, errorMessage);
-            return a - b;
-        }
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers, reverting with custom message on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function div(
-        uint256 a,
-        uint256 b,
-        string memory errorMessage
-    ) internal pure returns (uint256) {
-        unchecked {
-            require(b > 0, errorMessage);
-            return a / b;
-        }
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * reverting with custom message when dividing by zero.
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {tryMod}.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function mod(
-        uint256 a,
-        uint256 b,
-        string memory errorMessage
-    ) internal pure returns (uint256) {
-        unchecked {
-            require(b > 0, errorMessage);
-            return a % b;
-        }
-    }
-}
+import "./SafeMath.sol";
 
 contract CroToken is BEP20, Ownable, ReentrancyGuard {
 
@@ -280,11 +62,31 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         0xda9D2d8e320f4C05e41C0ACEb92B89F1c347BFeA;
     uint256 market_lock;
     uint256 market_released;
+    
+    uint256 public LIQUIDITY_CAP = 15;
+    uint256 public LIQUIDITY_TGE_RELEASE = 15;
+    uint256 public LIQUIDITY_VESTING_DURATION = 86400 * 30 * 12; // 12 months
 
+    uint256 public liquidity_startTime;
+    uint256 public liquidity_endTime;
+
+    uint8 public liquidity_stage;
+    address public  LIQUIDITY_ADDRESS =
+        0xda9D2d8e320f4C05e41C0ACEb92B89F1c347BFeA;
+    uint256 private liquidity_lock;
+    uint256 private liquidity_released;
+
+    //public sale
+    uint256 constant PUBLIC_CAP = 35;
+    uint256 totalPublicMinted;
+    bool public  publicSale_stage;    
+
+    uint256 public public_price;
 
     event PrivateClaim(address indexed account, uint256 amount, uint256 time);
     event TeamClaim(address indexed account, uint256 amount, uint256 time);
     event MarketClaim(address indexed account, uint256 amount, uint256 time);
+    event LiquidityClaim(address indexed account, uint256 amount, uint256 time);
 
     constructor() BEP20("CroToken", "CROT") {  
 
@@ -292,6 +94,8 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         maxTotalSupply = 1000000 * (10 ** decimals());
         MAX_WALLET_BALANCE = maxTotalSupply.div(100);
         team_lock = maxTotalSupply.mul(TEAM_CAP).div(100);
+        market_lock = maxTotalSupply.mul(MARKET_CAP).mul(MARKET_TGE_RELEASE).div(10000);
+        liquidity_lock = maxTotalSupply.mul(LIQUIDITY_CAP).mul(LIQUIDITY_TGE_RELEASE).div(10000);
 
     }
     modifier canPrivateClaim() {
@@ -313,8 +117,8 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         //transfer 15% for whilelists;
         for (uint256 i = 0; i < whitelist.length; i++) {            
             uint256 croAmount = (private_locks[whitelist[i]] * PRIVATE_TGE_RELEASE) / 100;
-            private_locks[whitelist[i]] -= croAmount;
-            //private_released[whitelist[i]] += croAmount;
+            //private_locks[whitelist[i]] -= croAmount;
+            private_released[whitelist[i]] += croAmount;
             _mint(whitelist[i], croAmount);            
         }
     }
@@ -324,8 +128,7 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         canPrivateSetup
         onlyOwner
     {
-        require(_users.length == funds.length,"Invalid input");
-        require(!isWhitelisted(_msgSender()), "Already listed");
+        require(_users.length == funds.length,"Invalid input");        
         uint256 _totalfund = 0;
         for(uint256 i = 0; i < funds.length; i++) {
             _totalfund += funds[i];
@@ -335,9 +138,10 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
             revert("ERROR: Over flow");
         }        
 
-        for(uint256 i = 0; i < _users.length; i++) {            
+        for(uint256 i = 0; i < _users.length; i++) {    
+               
             uint256 _croAmount = funds[i].div(PRIVATE_CRO_PRICE);
-            if (balanceOf(_users[i])+_croAmount > MAX_WALLET_BALANCE.mul(maxTotalSupply)) {
+            if (balanceOf(_users[i])+_croAmount > MAX_WALLET_BALANCE) {
                 revert("ERROR: Over Balanced");
             }
             private_locks[_users[i]] += _croAmount;
@@ -347,23 +151,22 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
     }
 
     function isWhitelisted(address _address) internal view returns (bool) {
-
         for(uint256 i = 0; i < whitelist.length; i++) {
             if (_address == whitelist[i]) {
                 return true;
             }
         }
         return false;
-
     }
 
     function privateClaim() external canPrivateClaim nonReentrant {
         require(block.timestamp > private_startTime, "still locked");
-        require(private_locks[_msgSender()] > 0, "No locked");        
+        require(private_locks[_msgSender()] > 0, "No locked");   
+        require(isWhitelisted(_msgSender()), "ERROR: is not WhiteListed");     
 
         uint256 amount = privateCanUnlockAmount(_msgSender());
         require(amount > 0, "Nothing to claim");
-        require(amount.add(balanceOf(_msgSender())) <= MAX_WALLET_BALANCE.mul(maxTotalSupply), "ERROR: OverBalanced!!!");
+        require(amount.add(balanceOf(_msgSender())) <= MAX_WALLET_BALANCE, "ERROR: OverBalanced!!!");
         private_released[_msgSender()] += amount;
         //private_locks[_msgSender()] -= amount;
         _mint(_msgSender(), amount);
@@ -371,7 +174,7 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         emit PrivateClaim(_msgSender(), amount, block.timestamp);
     }
 
-    function privateCanUnlockAmount(address _account) public view returns (uint256) {
+    function privateCanUnlockAmount(address _account) internal view returns (uint256) {
         if(block.timestamp < private_startTime) {
             return 0;
         } else if(block.timestamp >= private_endTime) {
@@ -390,8 +193,8 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         return _releasedTime;
     }
 
-    function privateInfo() external view returns (uint8, uint256, uint256) {
-        return (private_stage, private_startTime, private_endTime);
+    function privateInfo() external view returns (uint8, uint256, uint256, uint256) {
+        return (private_stage, private_startTime, private_endTime, private_totalMinted);
     }
 
     function setprivatePrice(uint256 _amount) external {
@@ -424,6 +227,7 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         require(team_stage == 1, "Cannot Claim now");
         require(block.timestamp > team_startTime, "ERROR: still Locked");
         require(_msgSender() == TEAM_ADVISOR_ADDRESS, "Invalid Address");
+        require(team_lock > team_released, "No claimable");
 
         uint256 amount = teamCanUnlockAmount();
         require(amount > 0, "Nothing to Claim");
@@ -448,7 +252,118 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         if(team_stage == 0) return (team_stage, team_startTime, team_endTime, team_lock, team_released, 0);
         return (team_stage, team_startTime, team_endTime, team_lock, team_released, teamCanUnlockAmount());
     }
+
+    // marketing sale 
+
+    function marketSetTgeTime(uint256 _tge) external onlyOwner {
+        require(market_stage == 0, "Cannot setup tge");
+        market_startTime = _tge;
+        market_endTime = _tge + MARKET_VESTING_DURATION;
+
+        market_stage = 1;
+
+        //transfer 15% for MARKETING_ADDRESS
+        uint256 croUnlockAtTge = market_lock.mul(MARKET_TGE_RELEASE).div(100);    
+        market_lock -= croUnlockAtTge;
+        transfer(MARKETING_ADDRESS, croUnlockAtTge);
+    }
+
+    function marketClaim() external nonReentrant {
+        require(market_stage == 1, "Can not claim now");
+        require(block.timestamp > market_startTime, "Still locked" );
+        require(_msgSender() == MARKETING_ADDRESS, "Invalid Address");
+        require(market_lock > market_released, "no locked");
+
+        uint256 amount = marketCanUnlockAmount();
+        require(amount > 0, "Nothing to Claim");
+        
+        market_released += amount;
+        transfer(_msgSender(), amount);
+        
+        emit MarketClaim(_msgSender(), amount, block.timestamp);
+    }
+
+    function marketCanUnlockAmount() public view returns (uint256) {
+        if (block.timestamp < market_startTime) {
+            return 0;
+        } else if (block.timestamp >= market_endTime) {
+            return market_lock - market_released;
+        } else {
+            uint256 releasedTime = releasedTimes(market_startTime, market_endTime);
+            uint256 totalVestingTime = market_endTime - market_startTime;
+            return market_lock.mul(releasedTime).div(totalVestingTime) - market_released;
+        }
+    }   
+
+    function marketInfo() external view returns (uint8, uint256, uint256, uint256, uint256, uint256) {
+        if(market_stage == 0) return (market_stage, market_startTime, market_endTime, market_lock, market_released, 0);
+        return (market_stage, market_startTime, market_endTime, market_lock, market_released, marketCanUnlockAmount());
+    }
+
+    function liquiditySetTgeTime(uint256 _tge) external onlyOwner {
+        require(liquidity_stage == 0, "Cannot setup tge");
+        liquidity_startTime = _tge;
+        liquidity_endTime = _tge + LIQUIDITY_VESTING_DURATION;
+
+        liquidity_stage = 1;
+
+        //transfer 15% for liquidityING_ADDRESS
+        uint256 croUnlockAtTge = liquidity_lock.mul(LIQUIDITY_TGE_RELEASE).div(100);    
+        liquidity_lock -= croUnlockAtTge;
+        transfer(LIQUIDITY_ADDRESS, croUnlockAtTge);
+    }
+
+    function liquidityClaim() external nonReentrant {
+        require(liquidity_stage == 1, "Can not claim now");
+        require(block.timestamp > liquidity_startTime, "Still locked" );
+        require(_msgSender() == LIQUIDITY_ADDRESS, "Invalid Address");
+        require(liquidity_lock > liquidity_released, "no locked");
+
+        uint256 amount = liquidityCanUnlockAmount();
+        require(amount > 0, "Nothing to Claim");
+        
+        liquidity_released += amount;
+        transfer(_msgSender(), amount);
+        
+        emit LiquidityClaim(_msgSender(), amount, block.timestamp);
+    }
+
+    function liquidityCanUnlockAmount() public view returns (uint256) {
+        if (block.timestamp < liquidity_startTime) {
+            return 0;
+        } else if (block.timestamp >= liquidity_endTime) {
+            return liquidity_lock - liquidity_released;
+        } else {
+            uint256 releasedTime = releasedTimes(liquidity_startTime, liquidity_endTime);
+            uint256 totalVestingTime = liquidity_endTime - liquidity_startTime;
+            return liquidity_lock.mul(releasedTime).div(totalVestingTime) - liquidity_released;
+        }
+    }
+
+    function liquidityInfo() external view returns (uint8, uint256, uint256, uint256, uint256, uint256) {
+        if(liquidity_stage == 0) return (liquidity_stage, liquidity_startTime, liquidity_endTime, liquidity_lock, liquidity_released, 0);
+        return (liquidity_stage, liquidity_startTime, liquidity_endTime, liquidity_lock, liquidity_released, liquidityCanUnlockAmount());
+    }
+
+    function setPublicStage() external onlyOwner returns (bool) {
+        bool stage = publicSale_stage;
+        publicSale_stage = !stage;
+        return true;
+    }
     
+    function publicClaim(uint256 _amount) external payable {
+        require(_amount > 0, "ERROR: Invalid Amount");        
+        require(publicSale_stage == true, "ERROR: public sale locked");
+        require(_amount.add(balanceOf(_msgSender())) + totalPublicMinted <= maxTotalSupply.mul(PUBLIC_CAP), "ERROR: Public sale OverFlow");
+        require(balanceOf(_msgSender()) + _amount <= MAX_WALLET_BALANCE, "ERROR:OverBalance");     
+        require(msg.value == public_price.mul(_amount), "ERROR: Invalid Fund");
+        _mint(_msgSender(), _amount);
+    }
+
+    function publicInfo() external view returns (bool, uint256) {
+        if(publicSale_stage == true) return (publicSale_stage, 0);
+        return (publicSale_stage, totalPublicMinted);
+    }
 
     function burn(uint256 _amount) external onlyOwner returns (bool) {
         require(balanceOf(owner()) >= _amount, "ERROR: Insufficient balance");
@@ -465,7 +380,6 @@ contract CroToken is BEP20, Ownable, ReentrancyGuard {
         );
         to.transfer(value);
     }
-
     
 
     /* ========== EMERGENCY ========== */
